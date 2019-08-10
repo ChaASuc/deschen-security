@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.deschen.security</groupId>
+    <artifactId>deschen-security</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <modules>
+        <module>deschen-security-core</module>
+        <module>deschen-security-browser</module>
+        <module>deschen-security-app</module>
+        <module>deshen-security-demo</module>
+    </modules>
+    <!--聚合工程-->
+    <packaging>pom</packaging>
+
+    <!--SpringBoot父依赖，对相关依赖提供默认统一版本-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.6.RELEASE</version>
+    </parent>
+
+    <!--规定版本-->
+    <properties>
+        <!--方便修改以后版本-->
+        <deschen.security.version>1.0.0-SNAPSHOT</deschen.security.version>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <build>
+        <finalName>deschen-security</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
