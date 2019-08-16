@@ -13,4 +13,21 @@
     <artifactId>deshen-security-demo</artifactId>
     <description>security测试用例模块</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.deschen.security</groupId>
+            <artifactId>deschen-security-browser</artifactId>
+            <version>${deschen.security.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>deschen-security-demo</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
