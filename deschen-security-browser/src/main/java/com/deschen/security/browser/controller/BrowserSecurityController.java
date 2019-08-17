@@ -60,7 +60,7 @@ public class BrowserSecurityController {
             if (StringUtils.endsWithIgnoreCase(redirectUrl, ".html")) {
                 // 如果是带有.html请求，则跳转到配置文件设置的登入页面
                 redirectStrategy.sendRedirect(request, response,
-                        securityProperties.getBrowserPorperties().getLoginPage());
+                        securityProperties.getBrowser().getLoginPage());
             }
             // 如果是json请求，则报错401,未授权错误
             return new ResultVO().setCode(HttpStatus.UNAUTHORIZED.value())

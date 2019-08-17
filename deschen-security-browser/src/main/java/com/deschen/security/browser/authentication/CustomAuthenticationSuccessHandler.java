@@ -40,7 +40,7 @@ public class CustomAuthenticationSuccessHandler extends SavedRequestAwareAuthent
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         log.info("【认证处理】登入成功");
         // 判断是json还是html
-        LoginTypeEnum loginTypeEnum = securityProperties.getBrowserPorperties().getLoginTypeEnum();
+        LoginTypeEnum loginTypeEnum = securityProperties.getBrowser().getLoginTypeEnum();
         if (LoginTypeEnum.JSON.equals(loginTypeEnum)) {
             // json返回
             response.setContentType("application/json;charset=UTF-8");

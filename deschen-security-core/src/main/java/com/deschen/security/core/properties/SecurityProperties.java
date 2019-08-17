@@ -13,6 +13,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "deschen.security")
 public class SecurityProperties {
 
-    private BrowserProperties browserPorperties = new BrowserProperties();
+    private BrowserProperties browser = new BrowserProperties();
 }
 

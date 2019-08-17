@@ -3,6 +3,7 @@ package com.deschen.security.browser;
 import com.deschen.security.browser.authentication.CustomAuthenticationFailtureHandler;
 import com.deschen.security.browser.authentication.CustomAuthenticationSuccessHandler;
 import com.deschen.security.core.properties.SecurityProperties;
+import com.deschen.security.core.validate.filter.ValidateCodeFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * @Author deschen
@@ -72,7 +74,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.formLogin() // 登入页面
+        ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
+        validateCodeFilter.setAuthenticationFailureHandler(authenticationFailtureHandler);
+
+        // 设置验证图片码过滤器在UsernamePasswordAuthenticationFilter之前
+        http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin() // 登入页面
                 .loginPage("/authentication/require")  //登入页面请求
                 // 用于提交登入信息，被UsernamePasswordAuthenticationFilter认证
                 .loginProcessingUrl("/authentication/form")
@@ -83,9 +90,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/authentication/require",
-                        securityProperties.getBrowserPorperties().getLoginPage(),
-                        "/error"    // springboot默认错误链接，避免被"/authentication/require"拦截
-                ).permitAll()   // 登入页面请求无条件允许通过
+                        securityProperties.getBrowser().getLoginPage(),
+                        "/error",    // springboot默认错误链接，避免被"/authentication/require"拦截
+                        "/code/image").permitAll()   // 登入页面请求无条件允许通过
                 .anyRequest()
                 .authenticated()
                 .and()
