@@ -38,7 +38,7 @@ public class CustomAuthenticationFailtureHandler extends SimpleUrlAuthentication
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         log.info("【认证处理】登入失败");
         // 判断json返回还是html返回
-        if (LoginTypeEnum.JSON.equals(securityProperties.getBrowser().getLoginTypeEnum())) {
+        if (LoginTypeEnum.JSON.equals(securityProperties.getBrowser().getLoginType())) {
             // json返回
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(

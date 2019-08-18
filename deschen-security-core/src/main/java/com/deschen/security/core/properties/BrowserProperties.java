@@ -15,6 +15,6 @@ public class BrowserProperties {
     // 如果demo模块没有配置其值，那么默认用定好的
     private String loginPage = "/default-login.html";
 
-    private LoginTypeEnum loginTypeEnum = LoginTypeEnum.JSON;
+    private LoginTypeEnum loginType = LoginTypeEnum.JSON;
 
 }

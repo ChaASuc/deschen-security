@@ -76,6 +76,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
         validateCodeFilter.setAuthenticationFailureHandler(authenticationFailtureHandler);
+        validateCodeFilter.setSecurityProperties(securityProperties);
 
         // 设置验证图片码过滤器在UsernamePasswordAuthenticationFilter之前
         http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)

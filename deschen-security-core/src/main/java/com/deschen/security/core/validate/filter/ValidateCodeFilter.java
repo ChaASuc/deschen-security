@@ -1,5 +1,6 @@
 package com.deschen.security.core.validate.filter;
 
+import com.deschen.security.core.properties.SecurityProperties;
 import com.deschen.security.core.validate.code.ImageCode;
 import com.deschen.security.core.validate.controller.ValidateCodeController;
 import com.deschen.security.core.validate.exception.ValidateCodeException;
@@ -10,6 +11,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -21,6 +23,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * @Author deschen
@@ -30,27 +33,40 @@ import java.io.IOException;
  */
 // OncePerRequestFilter 每次只会调用一次
 //@Component
-@Data
 @Slf4j
+@Data
 public class ValidateCodeFilter extends OncePerRequestFilter {
 
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
     private AuthenticationFailureHandler authenticationFailureHandler;
 
+    private SecurityProperties securityProperties;
+
+    private AntPathMatcher antPathMatcher = new AntPathMatcher();
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("【图片验证过滤器】开始判断url，url = {}", request.getRequestURL().toString());
-        // 判断url是否时提交图片检验码的规定方法的请求
-        if (StringUtils.pathEquals("/authentication/form", request.getRequestURL().toString())
-                && request.getMethod().equalsIgnoreCase("post")) {
-            try {
-                log.info("【图片验证过滤器】开始验证图片");
-                validate(new ServletWebRequest(request));
-            } catch (ValidateCodeException e) {
-                //捕获异常处理
-                log.info("【图片验证过滤器】 失败");
-                authenticationFailureHandler.onAuthenticationFailure(request, response, e);
+        log.info("【图片验证过滤器】开始判断url，URI = {}", request.getRequestURI());
+//        // 判断url是否时提交图片检验码的规定方法的请求
+//        if (StringUtils.pathEquals("/authentication/form", request.getRequestURI().toString())
+//                && request.getMethod().equalsIgnoreCase("post")) {
+        // 重构
+        String[] urls = securityProperties.getCode().getImage().getUrls();
+        for (String url:
+             urls) {
+            if (antPathMatcher.match(url, request.getRequestURI())) {
+                try {
+                    log.info("【图片验证过滤器】开始验证图片");
+                    validate(new ServletWebRequest(request));
+                } catch (ValidateCodeException e) {
+                    //捕获异常处理
+                    log.info("【图片验证过滤器】 失败");
+                    authenticationFailureHandler.onAuthenticationFailure(request, response, e);
+                    return;   // 避免运行下面代码
+                }
+                break;
             }
         }
         filterChain.doFilter(request, response);
@@ -75,7 +91,7 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
             throw new ValidateCodeException("验证码过期");
         }
 
-        if (!codeInSession.equals(codeInRequest)) {
+        if (!codeInSession.getCode().equalsIgnoreCase(codeInRequest)) {
             throw new ValidateCodeException("验证码不匹配");
         }
 
@@ -83,8 +99,8 @@ public class ValidateCodeFilter extends OncePerRequestFilter {
     }
 
     public static void main(String[] args) {
-        String str = StringUtils.cleanPath("http://localhost:8080/authentication/form");
-        String str2 = StringUtils.cleanPath("/authentication/form");
+//        String str = StringUtils.cleanPath("http://localhost:8080/authentication/form");
+//        String str2 = StringUtils.cleanPath("/authentication/form");
     }
 
 }
